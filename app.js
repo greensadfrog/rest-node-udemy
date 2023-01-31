@@ -1,5 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
 
 const feedRoutes = require('./routes/feed');
 
@@ -18,6 +19,14 @@ app.use((req, res, next) => {
 
 app.use('/feed', feedRoutes);
 
-app.listen(PORT, () => {
-    console.log(`server started on http://localhost:${PORT}`);
-})
+mongoose
+    .set('strictQuery', false)
+    .connect('mongodb://localhost:27017/blog')
+    .then(result => {
+        app.listen(PORT, () => {
+            console.log(`server started on http://localhost:${PORT}`);
+        })
+    })
+    .catch(err => {
+        console.log(err);
+    })
