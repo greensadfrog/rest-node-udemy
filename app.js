@@ -48,8 +48,8 @@ app.use((req, res, next) => {
 })
 
 app.use('/feed', feedRoutes);
-
 app.use('/auth', authRoutes);
+
 
 app.use((error, req, res, next) => {
     console.log(error);
@@ -63,8 +63,16 @@ mongoose
     .set('strictQuery', false)
     .connect('mongodb://localhost:27017/blog')
     .then(result => {
-        app.listen(PORT, () => {
-            console.log(`server started on http://localhost:${PORT}`);
+        const server = app.listen(PORT);
+        const {Server} = require('socket.io');
+        const io = new Server(server, {
+            cors: {
+                origin: "http://localhost:3000",
+                methods: ['GET, POST, PUT, PATCH, DELETE']
+            }
+        });
+        io.on('connection', socket => {
+            console.log('Client connected');
         })
     })
     .catch(err => {

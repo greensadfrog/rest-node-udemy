@@ -17,6 +17,7 @@ exports.getPosts = (req, res, next) => {
             totalItems = count;
             return Post
                 .find()
+                .populate('creator')
                 .skip((currentPage - 1) * perPage)
                 .limit(perPage)
         })
